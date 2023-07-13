@@ -20,10 +20,11 @@
     border: 1px solid rgb(230, 235, 242);
     box-shadow: 0 0 10px rgb(230, 235, 242);
     border-radius: 0.5rem;
-    padding: 14px;
+    padding: 28px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-end;
+    justify-content: flex-start;
+    background-color: white;
 }
 
 table {
@@ -53,7 +54,7 @@ p {
 }
 
 select {
-    padding: 10px 20px;
+    padding: 10px;
     border: 1px solid rgb(230, 235, 242);
     box-shadow: 0 0 10px rgb(230, 235, 242);
     border-radius: 0.5rem;
@@ -63,11 +64,12 @@ select {
 .language-div {
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .language-div button {
-    width: 80%;
-    margin: auto;
+    width: 90%;
 }
 
 .header {
@@ -75,6 +77,7 @@ select {
     background: rgb(47,11,44);
     position: absolute;
     top:0;
+    left:0;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     color: orange;

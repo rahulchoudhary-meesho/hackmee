@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './style.css';
 import axios from 'axios';
-import { speakText } from '../../Service/TextToSpeech';
-import { getLanguages } from '../../Service/TranslateText';
+import { tableData } from '../../Constants/mockData';
 
 function Chatbot() {
     const [showWindow, setShowWindow] = useState(false);
     const [inputText, setInputText] = useState('');
     const [detectLanguageKey, setdetectedLanguageKey] = useState('en');
-    const [selectedLanguageKey, setLanguageKey] = useState('');
+    const [selectedLanguageKey, setLanguageKey] = useState(localStorage.getItem('language-selected'));
     const [languagesList, setLanguagesList] = useState([]);
     const [resultText, setResultText] = useState('');
+    const [textToSpeech, setTextToSpeech] = useState('');
     
     const toggleWindow = () => {
         setShowWindow(showWindow ? false : true);
@@ -25,8 +25,6 @@ function Chatbot() {
         })
     }
     
-    
-
     const languageKey = (selectedLanguage) => {
         setLanguageKey(selectedLanguage.target.value)
     }
@@ -45,13 +43,36 @@ function Chatbot() {
         })
     }
 
-    const handleKnowMore = () => {
+    const handleKnowMore = (text) => {
         toggleWindow();
-
+        setTextToSpeech(text);
     }
+
+    const speakText = (text) => {
+        if ('speechSynthesis' in window) {
+            const speech = new SpeechSynthesisUtterance();
+            speech.text = text;
+            speech.lang = selectedLanguageKey === 'en' ? 'en-US' : 'hi-IN';
+            // Selecting a male voice
+            const voices = speechSynthesis.getVoices();
+            const maleVoice = voices.find((voice) => (selectedLanguageKey === 'en' ? (voice.name === 'Google UK English Male') : (voice.name === 'Google हिन्दी-इंडिया')));
+            speech.voice = maleVoice;
+            debugger;
+    
+            // Adjusting speech speed
+            speech.rate = 0.85; // Adjust the rate as desired (0.1 to 10)
+            speechSynthesis.speak(speech);
+            speech.onend = ()=>{
+                debugger;
+            };
+        } else {
+            console.log('Text-to-speech not supported in this browser.');
+        }
+    };
 
     const setLanguage = () => {
         localStorage.setItem('language-selected',selectedLanguageKey);
+        speakText(textToSpeech);
     }
 
     useEffect(() => {
@@ -67,16 +88,16 @@ function Chatbot() {
     return (
       <div backgroundColor={'red'} width={'20%'}>
         {showWindow && (
-          <div className="chat-window-main">
+          <div className="chat-window-main" id="chatWindow">
             <div className='header'>
                 <h3>Meesho Support</h3>
                 <span onClick={toggleWindow}>x</span>
             </div>
             <div className='language-div'>
-                <select className="language-select" onChange={languageKey}>
+                <select className="language-select" onChange={languageKey} s>
                     <option>Please Select Language..</option>
                     {languagesList.map((language) => {
-                        return <option value={language.code}>{language.name}</option>;
+                        return <option value={language.code} selected={language.code === selectedLanguageKey}>{language.name}</option>;
                     })}
                 </select>
                 <button disabled={!selectedLanguageKey} onClick={setLanguage}>Choose a language</button>
@@ -95,21 +116,20 @@ function Chatbot() {
                 <th>ROI</th>
                 <th>Insights</th>
             </tr>
-            <tr>
-                <td>123456</td>
-                <td>300 Daily</td>
-                <td>22,000</td>
-                <td>1223435</td>
-                <td>2323</td>
-                <td>23532</td>
-                <td>323526</td>
-                <td>3</td>
+            {tableData.map((row) => (<tr>
+                <td>{row.campaign}</td>
+                <td>{row.budget}</td>
+                <td>{row.budget_utilized}</td>
+                <td>{row.views}</td>
+                <td>{row.clicks}</td>
+                <td>{row.orders}</td>
+                <td>{row.revenue}</td>
+                <td>{row.roi}</td>
                 <td>
-                    <p>Your campaign is giving Good Roi of 3.</p>
-                    <p>But your campaign finishes budget by 10AM. You can get 30% more orders by increasing budget</p>
-                    <button onClick={handleKnowMore}>Know More</button>
+                    <p>{row.insight}</p>
+                    <button onClick={() => handleKnowMore(row.audio_text)}>Know More</button>
                 </td>
-            </tr>
+            </tr>))}
         </table>
       </div>
     );
