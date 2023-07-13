@@ -5,41 +5,32 @@ import { tableData } from '../../Constants/mockData';
 
 function Chatbot() {
     const [showWindow, setShowWindow] = useState(false);
-    const [inputText, setInputText] = useState('');
-    const [detectLanguageKey, setdetectedLanguageKey] = useState('en');
     const [selectedLanguageKey, setLanguageKey] = useState(localStorage.getItem('language-selected'));
     const [languagesList, setLanguagesList] = useState([]);
     const [resultText, setResultText] = useState('');
     const [textToSpeech, setTextToSpeech] = useState('');
+    const [showLanguage, setShowLanguage] = useState(true);
+    const [buttonDisable, setButtonDisable] = useState(localStorage.getItem('language-selected') ? false : true);
     
     const toggleWindow = () => {
         setShowWindow(showWindow ? false : true);
     }
-
-    const getLanguageSource = () => {
-        axios.post(`https://libretranslate.de/detect`, {
-            q: inputText
-        })
-        .then((response) => {
-            setdetectedLanguageKey(response.data[0].language)
-        })
-    }
     
     const languageKey = (selectedLanguage) => {
-        setLanguageKey(selectedLanguage.target.value)
+        setLanguageKey(selectedLanguage.target.value);
     }
 
-    const translateText = () => {
-        getLanguageSource();
-
+    const translateText = (text) => {
         let data = {
-            q : inputText,
-            source: detectLanguageKey,
+            q : text,
+            source: selectedLanguageKey === 'en' ? 'hi' : 'en',
             target: selectedLanguageKey
         }
+        debugger;
         axios.post(`https://libretranslate.de/translate`, data)
         .then((response) => {
-            setResultText(response.data.translatedText)
+            debugger;
+            setResultText(response.data.translatedText);
         })
     }
 
@@ -57,10 +48,9 @@ function Chatbot() {
             const voices = speechSynthesis.getVoices();
             const maleVoice = voices.find((voice) => (selectedLanguageKey === 'en' ? (voice.name === 'Google UK English Male') : (voice.name === 'Google हिन्दी-इंडिया')));
             speech.voice = maleVoice;
-            debugger;
     
             // Adjusting speech speed
-            speech.rate = 0.85; // Adjust the rate as desired (0.1 to 10)
+            speech.rate = selectedLanguageKey === 'en' ? 1 : 0.85; // Adjust the rate as desired (0.1 to 10)
             speechSynthesis.speak(speech);
             speech.onend = ()=>{
                 debugger;
@@ -71,8 +61,17 @@ function Chatbot() {
     };
 
     const setLanguage = () => {
-        localStorage.setItem('language-selected',selectedLanguageKey);
-        speakText(textToSpeech);
+        debugger;
+        localStorage.setItem('language-selected', selectedLanguageKey);
+        translateText(textToSpeech);
+        debugger;
+        speakText(resultText);
+        let p = document.createElement('p');
+        debugger;
+        p.textContent = resultText;
+        document.getElementById('chatWindow').appendChild(p);
+        debugger;
+        setButtonDisable(true);
     }
 
     useEffect(() => {
@@ -94,13 +93,13 @@ function Chatbot() {
                 <span onClick={toggleWindow}>x</span>
             </div>
             <div className='language-div'>
-                <select className="language-select" onChange={languageKey} s>
+                {showLanguage && <><select className="language-select" onChange={languageKey}>
                     <option>Please Select Language..</option>
                     {languagesList.map((language) => {
                         return <option value={language.code} selected={language.code === selectedLanguageKey}>{language.name}</option>;
                     })}
                 </select>
-                <button disabled={!selectedLanguageKey} onClick={setLanguage}>Choose a language</button>
+                <button disabled={false} onClick={setLanguage}>Choose a language</button></>}
             </div>
           </div>
         )}

@@ -22,9 +22,11 @@
     border-radius: 0.5rem;
     padding: 28px;
     display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
+    align-items: flex-start;
+    justify-content: flex-end;
     background-color: white;
+    flex-direction: column;
+    overflow: scroll;
 }
 
 table {
@@ -48,7 +50,7 @@ button {
 }
 
 p {
-    width: 60%;
+    width: 100%;
     margin: 0;
     padding-bottom: 14px;
 }
