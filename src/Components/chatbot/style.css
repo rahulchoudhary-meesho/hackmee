@@ -1,0 +1,99 @@
+.chatbot-button {
+    position: absolute;
+    bottom: 50px;
+    right: 70px;
+    padding: 15px 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: blue;
+    cursor: pointer;
+}
+
+.chat-window-main {
+    width: 25%;
+    position: absolute;
+    bottom: 40px;
+    right: 60px;
+    height: 50vh;
+    border: 1px solid rgb(230, 235, 242);
+    box-shadow: 0 0 10px rgb(230, 235, 242);
+    border-radius: 0.5rem;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+table {
+    width: 100%;
+}
+
+table, th, td {
+    border: 1px solid rgb(230, 235, 242);
+    border-collapse: collapse;
+    padding: 14px;
+    text-align: left;
+}
+
+button {
+    background: rgb(60, 41, 183);
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border:0;
+    border-radius: 6px;
+}
+
+p {
+    width: 60%;
+    margin: 0;
+    padding-bottom: 14px;
+}
+
+select {
+    padding: 10px 20px;
+    border: 1px solid rgb(230, 235, 242);
+    box-shadow: 0 0 10px rgb(230, 235, 242);
+    border-radius: 0.5rem;
+    margin-bottom: 14px;
+}
+
+.language-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.language-div button {
+    width: 80%;
+    margin: auto;
+}
+
+.header {
+    width: 100%;
+    background: rgb(47,11,44);
+    position: absolute;
+    top:0;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    color: orange;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h3 {
+    padding: 0 14px; 
+}
+
+.header span {
+    padding-right: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:disabled {
+    background: grey;
+    cursor: not-allowed;
+}
