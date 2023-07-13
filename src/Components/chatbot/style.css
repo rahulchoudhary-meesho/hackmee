@@ -102,3 +102,10 @@ button:disabled {
     background: grey;
     cursor: not-allowed;
 }
+
+.message_box {
+    padding: 14px;
+    border: 1px solid grey;
+    background: lightgrey;
+    font-size: 18px;
+}

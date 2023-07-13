@@ -10,7 +10,10 @@ function Chatbot() {
     const [resultText, setResultText] = useState('');
     const [textToSpeech, setTextToSpeech] = useState('');
     const [showLanguage, setShowLanguage] = useState(true);
-    const [buttonDisable, setButtonDisable] = useState(localStorage.getItem('language-selected') ? false : true);
+    const [buttonDisable, setButtonDisable] = useState(false);
+    const [firstMessage, setFirstMessage] = useState('');
+    const [showFirstMessage, setShowFirstMessage] = useState(false);
+    const [haveMoreQuestions, setShowHaveMoreQuestions] = useState(false);
     
     const toggleWindow = () => {
         setShowWindow(showWindow ? false : true);
@@ -20,18 +23,14 @@ function Chatbot() {
         setLanguageKey(selectedLanguage.target.value);
     }
 
-    const translateText = (text) => {
+    const translateText = async (text) => {
         let data = {
             q : text,
             source: selectedLanguageKey === 'en' ? 'hi' : 'en',
             target: selectedLanguageKey
         }
-        debugger;
-        axios.post(`https://libretranslate.de/translate`, data)
-        .then((response) => {
-            debugger;
-            setResultText(response.data.translatedText);
-        })
+        const res = await axios.post(`https://libretranslate.de/translate`, data);
+        return res;
     }
 
     const handleKnowMore = (text) => {
@@ -45,15 +44,14 @@ function Chatbot() {
             speech.text = text;
             speech.lang = selectedLanguageKey === 'en' ? 'en-US' : 'hi-IN';
             // Selecting a male voice
-            const voices = speechSynthesis.getVoices();
-            const maleVoice = voices.find((voice) => (selectedLanguageKey === 'en' ? (voice.name === 'Google UK English Male') : (voice.name === 'Google हिन्दी-इंडिया')));
-            speech.voice = maleVoice;
+            const maleVoice = selectedLanguageKey === 'en' ? 'Google UK English Male' : 'Google हिन्दी-इंडिया';
+            speech.voiceURI = maleVoice;
     
             // Adjusting speech speed
             speech.rate = selectedLanguageKey === 'en' ? 1 : 0.85; // Adjust the rate as desired (0.1 to 10)
             speechSynthesis.speak(speech);
             speech.onend = ()=>{
-                debugger;
+                setShowHaveMoreQuestions(true);
             };
         } else {
             console.log('Text-to-speech not supported in this browser.');
@@ -61,16 +59,12 @@ function Chatbot() {
     };
 
     const setLanguage = () => {
-        debugger;
         localStorage.setItem('language-selected', selectedLanguageKey);
-        translateText(textToSpeech);
-        debugger;
-        speakText(resultText);
-        let p = document.createElement('p');
-        debugger;
-        p.textContent = resultText;
-        document.getElementById('chatWindow').appendChild(p);
-        debugger;
+        translateText(textToSpeech).then((data)=> {
+            setFirstMessage(data.data.translatedText);
+            setShowFirstMessage(true);
+            speakText(data.data.translatedText);
+        });
         setButtonDisable(true);
     }
 
@@ -99,7 +93,23 @@ function Chatbot() {
                         return <option value={language.code} selected={language.code === selectedLanguageKey}>{language.name}</option>;
                     })}
                 </select>
-                <button disabled={false} onClick={setLanguage}>Choose a language</button></>}
+                <button disabled={buttonDisable} onClick={setLanguage}>Choose a language</button></>}
+                {showFirstMessage && 
+                    <p>
+                        {firstMessage}
+                    </p>
+                }
+                {haveMoreQuestions && 
+                    <>
+                        <p>
+                            Have More Questions??
+                        </p>
+                        <div style={{display:'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                            <button style={{marginRight: 8}}>Yes</button>
+                            <button>No</button>
+                        </div>
+                    </>
+                }
             </div>
           </div>
         )}
