@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './style.css';
 import axios from 'axios';
-import { tableData } from '../../Constants/mockData';
+import { mockAnotherQuestions, mockQuestions, tableData } from '../../Constants/mockData';
 import { Rating } from '@smastrom/react-rating';
 import '@smastrom/react-rating/style.css'
 
@@ -17,6 +17,9 @@ function Chatbot() {
     const [haveMoreQuestions, setShowHaveMoreQuestions] = useState(false);
     const [showRatingMeter, setShowRatingMeter] = useState(false);
     const [rating, setRating] = useState();
+    const [secondLevelQuestion, setSecondLevelQuestions] = useState([]);
+    const [showSecondLevelQuestion, setShowSecondLevelQuestion] = useState(false);
+    const [selectedQuestion, setSelectedQuestion] = useState('');
     
     const toggleWindow = () => {
         setShowWindow(showWindow ? false : true);
@@ -96,7 +99,15 @@ function Chatbot() {
     }
 
     const getMoreQuestions = () => {
-        
+        setSecondLevelQuestions([mockQuestions]);
+        setShowSecondLevelQuestion(true);
+        setShowHaveMoreQuestions(false);
+    }
+
+    const addMoreQuestions = () => {
+        const question = [...secondLevelQuestion];
+        question.push(mockAnotherQuestions);
+        setSecondLevelQuestions(question, () => {debugger});
     }
 
     useEffect(() => {
@@ -119,7 +130,7 @@ function Chatbot() {
             </div>
             <div className='language-div'>
                 {showLanguage && 
-                    <>
+                    <div style={{paddingTop: '40px'}}>
                         <select className="language-select" onChange={languageKey}>
                             <option>Please Select Language..</option>
                             {languagesList.map((language) => {
@@ -127,7 +138,7 @@ function Chatbot() {
                             })}
                         </select>
                         <button disabled={buttonDisable} onClick={setLanguage}>Choose a language</button>
-                    </>
+                    </div>
                 }
                 {showFirstMessage && 
                     <div className='message_box'>
@@ -159,6 +170,24 @@ function Chatbot() {
                         />
                         <p style={{textAlign:'center'}}>Rate us</p>
                         <button onClick={resetEverything}>Submit Feedback</button>
+                    </div>
+                }
+                {showSecondLevelQuestion && 
+                    <div>
+                        {secondLevelQuestion && secondLevelQuestion.map((data) => (
+                            <>
+                            <div>
+                                Choose any one option from below suggestions - 
+                                {data.follow_up_ques.map((question) => (
+                                    <div className={`message_box ${selectedQuestion === question ? 'active': ''}`} onClick={()=>(setSelectedQuestion(question))} style={{cursor:'pointer'}}>
+                                        <p style={{padding:0}}>{question}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            {secondLevelQuestion.length > 1 && <hr></hr>}
+                            </>
+                        ))}
+                        <button style={{cursor: 'pointer'}} onClick={addMoreQuestions}>Submit</button>
                     </div>
                 }
             </div>

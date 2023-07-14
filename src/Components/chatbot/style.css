@@ -17,6 +17,7 @@
     bottom: 40px;
     right: 60px;
     height: 50vh;
+    max-height: 50vh;
     border: 1px solid rgb(230, 235, 242);
     box-shadow: 0 0 10px rgb(230, 235, 242);
     border-radius: 0.5rem;
@@ -68,6 +69,7 @@ select {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    overflow: scroll;
 }
 
 .language-div button {
@@ -110,4 +112,8 @@ button:disabled {
     padding: 8px;
     margin: 14px 0;
     border-radius: 6px;
+}
+
+.active {
+    background-color: rgba(225, 222, 222, 0.9);
 }
